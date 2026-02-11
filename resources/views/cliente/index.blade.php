@@ -23,6 +23,19 @@
                 </div>
             </div>
         </div>
+
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <form method="GET" action="{{ url("/clientes") }}" class="flex items-center gap-2">
+                <input type="text" name="buscar" placeholder="Buscar cliente" class="rounded-md" value="{{ $buscar }}">
+                <button type="submit" class="bg-blue-500 text-white text-2xl w-28 h-10 rounded-md hover:bg-blue-600">Buscar</button>
+            </form>
+        </div>
+
+        <div>
+            <table>
+
+            </table>
+        </div>
     </x-app-layout>
 </body>
 </html>

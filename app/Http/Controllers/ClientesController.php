@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Clientes;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ClientesController extends Controller
 {
@@ -13,6 +14,14 @@ class ClientesController extends Controller
     public function index(Request $request)
     {
         //
+        $buscar = trim($request->get("buscar"));
+        $clientes = DB::table("clientes")
+                        ->select('*')
+                        ->where('nombre', 'LIKE', '%' . $buscar . '%')
+                        ->orWhere('email', 'LIKE', '%' . $buscar . '%')
+                        ->orderBy('nombre', 'asc')
+                        ->paginate(10);
+
         return view('cliente.index');
     }
 
