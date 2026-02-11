@@ -24,6 +24,15 @@
             </div>
         </div>
 
+        @if (Session::has('mensaje'))
+            <div class="" role="alert">
+                {{ Session::get('mensaje') }}
+                <button type="button" class="" data-bs-dismiss="alert" aria-label="Close">
+                    <span>Cerrar</span>
+                </button>
+            </div>            
+        @endif
+
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <form method="GET" action="{{ url("/clientes") }}" class="flex items-center gap-2">
                 <input type="text" name="buscar" placeholder="Buscar cliente" class="rounded-md" value="{{ $buscar }}">
@@ -32,9 +41,69 @@
         </div>
 
         <div>
-            <table>
-
+            <table class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                <thead class="">
+                    <tr>
+                        <th class="px-4">Id</th>
+                        <th class="px-4">Nombre</th>
+                        <th class="px-4">Dirección</th>
+                        <th class="px-4">Email</th>
+                        <th class="px-4">Teléfono</th>
+                        <th class="px-4">Logo src</th>
+                        <th class="px-4">Logo preview</th>
+                        <th class="px-4"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (isset($cliente))
+                        <tr>
+                            <td class="px-4">{{ $cliente->id }}</td>
+                            <td class="px-4">{{ $cliente->nombre }}</td>
+                            <td class="px-4">{{ $cliente->direccion }}</td>
+                            <td class="px-4">{{ $cliente->email }}</td>
+                            <td class="px-4">{{ $cliente->telefono }}</td>
+                            <td class="px-4">{{ $cliente->logo }}</td>
+                            <td class="px-4"><img class="" src="{{ asset('storage') . '/' . $cliente->logo }}" id="image-preview" height="70" alt=""></td>
+                            <td class="px-4">
+                                <a class="" href="{{ url('/clientes/' . $cliente->id . '/edit') }}">Editar</a>
+                                <form action="{{ url('/clientes/' . $cliente->id) }}"  method="POST" class="">
+                                    @csrf
+                                    {{ method_field('DELETE') }}
+                                    <input class="" type="submit" onclick="return confirm('¿Quiere borrar el cliente seleccionado?')" value="Borrar">
+                                </form>
+                            </td>
+                        </tr>
+                    @else
+                        @foreach ($clientes as $cliente)
+                            <tr>
+                                <td class="px-4">{{ $cliente->id }}</td>
+                                <td class="px-4">{{ $cliente->nombre }}</td>
+                                <td class="px-4">{{ $cliente->direccion }}</td>
+                                <td class="px-4">{{ $cliente->email }}</td>
+                                <td class="px-4">{{ $cliente->telefono }}</td>
+                                <td class="px-4">{{ $cliente->logo }}</td>
+                                <td class="px-4"><img class="" src="{{ asset('storage') . '/' . $cliente->logo }}" id="image-preview" height="70" alt=""></td>
+                                <td class="px-4">
+                                    <a class="" href="{{ url('/clientes/' . $cliente->id . '/edit') }}">Editar</a>
+                                    <form action="{{ url('/clientes/' . $cliente->id) }}"  method="POST" class="">
+                                        @csrf
+                                        {{ method_field('DELETE') }}
+                                        <input class="" type="submit" onclick="return confirm('¿Quiere borrar el cliente seleccionado?')" value="Borrar">
+                                    </form>
+                                </td>
+                            </tr>
+                        @endforeach
+                    @endif
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td class="px-4" colspan="7"><a class="underline text-blue-600" href="{{ url('clientes/create') }}">Nuevo</a></td>
+                    </tr>
+                </tfoot>
             </table>
+            @if (empty($cliente) && isset($clientes))
+                {{ $clientes->links() }} 
+            @endif
         </div>
     </x-app-layout>
 </body>

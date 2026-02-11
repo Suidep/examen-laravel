@@ -3,8 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Clientes;
+use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpKernel\HttpCache\Store;
 
 class ClientesController extends Controller
 {
@@ -22,7 +25,7 @@ class ClientesController extends Controller
                         ->orderBy('nombre', 'asc')
                         ->paginate(10);
 
-        return view('cliente.index');
+        return view('cliente.index', compact('clientes', 'buscar'));
     }
 
     /**
@@ -31,6 +34,7 @@ class ClientesController extends Controller
     public function create()
     {
         //
+        return view('cliente.create');
     }
 
     /**
@@ -39,6 +43,15 @@ class ClientesController extends Controller
     public function store(Request $request)
     {
         //
+        $datos = $request->except('_token');
+
+        if ($request->hasFile('logo')){
+            $datos['logo'] = $request->file('logo')->store('uploads', 'public');
+        }
+
+        Clientes::insert($datos);
+
+        return redirect('clientes');
     }
 
     /**
@@ -52,17 +65,33 @@ class ClientesController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Clientes $clientes)
+    public function edit($id)
     {
         //
+        $cliente = Clientes::findOrFail($id);
+
+        return view('cliente.edit', compact('cliente'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Clientes $clientes)
+    public function update(Request $request, $id)
     {
         //
+        $datos = $request->except(['_token', '_method']);
+
+        if ($request->hasFile('logo')){
+            $cliente = Clientes::findOrFail($id);
+
+            if (Storage::delete('public/' . $cliente->logo)){
+                $datos['logo'] = $request->file('logo')->store('uploads', 'public');
+            }
+        }
+
+        Clientes::where('id', '=', $id)->update($datos);
+
+        return redirect('clientes')->with('mensaje', 'Cliente modificado');
     }
 
     /**
