@@ -10,9 +10,10 @@ class ClientesController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         //
+        return view('cliente.index');
     }
 
     /**
